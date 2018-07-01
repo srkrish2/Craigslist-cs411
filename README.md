@@ -4,6 +4,8 @@ HTML/JS/CSS/PHP code will be put into the app/ folder
 
 How to use Scraper:
 
+0. Requirements: "pip install scrapy scrapy_proxies"
+
 1. edit lines 7 and 25 of Scrapy-Craigslist-Master/craigslist/spiders/all-pages-content.py to reflect the URL of the city you are working on 
 
 2. enter the Scrapy-Craigslist-Master folder
