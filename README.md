@@ -8,7 +8,7 @@ How to use Scraper:
 
 2. enter the Scrapy-Craigslist-Master folder
 
-3. run "scrapy crawl jobscontent -o <cityname>_withdesc.csv"
+3. run "scrapy crawl jobscontent -o cityname_withdesc.csv"
   
 4. move file to data/ folder
 
