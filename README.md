@@ -2,6 +2,20 @@ The scraper is modified from https://github.com/GoTrained/Scrapy-Craigslist. I w
 
 HTML/JS/CSS/PHP code will be put into the app/ folder 
 
+How to use Scraper:
+
+1. edit lines 7 and 25 of Scrapy-Craigslist-Master/craigslist/spiders/all-pages-content.py to reflect the URL of the city you are working on 
+
+2. enter the Scrapy-Craigslist-Master folder
+
+3. run "scrapy crawl jobscontent -o <cityname>_withdesc.csv"
+  
+4. move file to data/ folder
+
+5. verify csv content. Add "-checked" to the end of the file name once checked.
+
+Below is a list of cities for starters. Cross the city off if you use this list. Add more cities if you can think of any
+
 ~~carbondale~~
 ~~chambana~~
 ~~chicago~~
@@ -9,8 +23,8 @@ HTML/JS/CSS/PHP code will be put into the app/ folder
 ~~portland~~
 ~~seattle~~
 ~~SAn fransisco~~
-los angelos
-boise, idaho
+~~los angelos~~
+~~boise, idaho~~
 indianapolis
 miami
 atlanta
