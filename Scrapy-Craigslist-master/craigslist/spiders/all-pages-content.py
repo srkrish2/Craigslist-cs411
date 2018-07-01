@@ -4,7 +4,7 @@ from scrapy import Request
 class JobsSpider(scrapy.Spider):
     name = "jobscontent"
     allowed_domains = ["craigslist.org"]
-    start_urls = ["https://chambana.craigslist.org/search/cta"]
+    start_urls = ["https://sfbay.craigslist.org/search/sfc/cta"]
 
     def parse(self, response):
         cars = response.xpath('//p[@class="result-info"]')
@@ -22,7 +22,7 @@ class JobsSpider(scrapy.Spider):
             yield Request(absolute_url, callback=self.parse_page, meta={'URL': absolute_url, 'Title': title, 'Address':address, 'Price':price})
             
         relative_next_url = response.xpath('//a[@class="button next"]/@href').extract_first()
-        absolute_next_url = "https://chambana.craigslist.org" + relative_next_url
+        absolute_next_url = "https://sfbay.craigslist.org" + relative_next_url
         yield Request(absolute_next_url, callback=self.parse)
             
     def parse_page(self, response):
@@ -94,6 +94,7 @@ class JobsSpider(scrapy.Spider):
         # print(odometer)
         # input()
         
-        yield{'URL': url, 'Title': title, 'Title2': title2, 'Address':address, 'Price':price, 'Description':description,
+        yield{'URL': url, 'Title': title, 'Title2': title2, 'Address':address, 'Price':price,
+              'Description':description,
               'VIN':vin, 'Condition':condition, 'Cylinders':cylinders, 'Drive':drive, 'Fuel':fuel, 'Odometer':odometer,
-              'Color':color, 'Size':size, 'Title':title_status, 'Transmission':transmission, 'Type':type}
+              'Color':color, 'Size':size, 'TitleStatus':title_status, 'Transmission':transmission, 'Type':type}
