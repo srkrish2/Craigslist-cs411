@@ -25,7 +25,7 @@ Below is a list of cities for starters. Cross the city off if you use this list.
 ~~SAn fransisco~~
 ~~los angelos~~
 ~~boise, idaho~~
-indianapolis
+~~indianapolis~~
 miami
 atlanta
 boston
