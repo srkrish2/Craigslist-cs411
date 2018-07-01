@@ -28,7 +28,7 @@ Below is a list of cities for starters. Cross the city off if you use this list.
 ~~los angelos~~
 ~~boise, idaho~~
 ~~indianapolis~~
-miami
+~~miami~~
 atlanta
 boston
 new york
