@@ -5,6 +5,8 @@ function connect_to_db(){
 	if(!$conn) {
 		die("DB connection failed: ".mysqli_connect_error());
 	}
+
+	return $conn;
 }
 
 ?>

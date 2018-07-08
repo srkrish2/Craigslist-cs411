@@ -1,4 +1,5 @@
 <?php
+include_once('./db_conn.php');
 $conn = connect_to_db();
 ?>
 <html>
