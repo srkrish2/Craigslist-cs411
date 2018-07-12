@@ -6,16 +6,16 @@
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
-  <a class="nav-link" href="#">Home</a>
+  <a class="nav-link" href="./index.php">Home</a>
       </li>
       <li class="nav-item active">
-  <a class="nav-link" href="#">Search<span class="sr-only">(current)</span></a>
+  <a class="nav-link" href="./search.php">Search<span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item">
-  <a class="nav-link" href="#">Manage</a>
+  <a class="nav-link" href="./manage.php">Manage</a>
       </li>
       <li class="nav-item">
-  <a class="nav-link" href="#">Inbox</a>
+  <a class="nav-link" href="./inbox.php">Inbox</a>
       </li>
     </ul>
     <span class="navbar-text">

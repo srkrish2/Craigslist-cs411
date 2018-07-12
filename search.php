@@ -1,3 +1,10 @@
+<?php
+include_once('db_conn.php');
+$conn = connect_to_db();
+if(!empty($_GET['post_id'])) {
+	$post_id = $_GET['post_id'];
+}
+?>
 <html>
 <head>
 	<?php include('./header_stuff.php'); ?>
@@ -23,7 +30,7 @@
 				<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
 			</div>
 			<hr>
-			<h1>Post 1</h1>
+			<h1>Post #<?php echo $post_id?></h1>
 			<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
 			  <ol class="carousel-indicators">
 			    <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
@@ -51,12 +58,23 @@
 			  </a>
 			</div>
 			<hr>
-			<ul>
-			   <li>Morbi in sem quis dui placerat ornare. Pellentesque odio nisi, euismod in, pharetra a, ultricies in, diam. Sed arcu. Cras consequat.</li>
-			   <li>Praesent dapibus, neque id cursus faucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis, accumsan porttitor, facilisis luctus, metus.</li>
-			   <li>Phasellus ultrices nulla quis nibh. Quisque a lectus. Donec consectetuer ligula vulputate sem tristique cursus. Nam nulla quam, gravida non, commodo a, sodales sit amet, nisi.</li>
-			   <li>Pellentesque fermentum dolor. Aliquam quam lectus, facilisis auctor, ultrices ut, elementum vulputate, nunc.</li>
-			</ul>
+			<?php
+				if($post_id) {
+					$query = 'SELECT * FROM posts WHERE post_id = '.$post_id;
+					$result = mysqli_query($conn,$query);
+					foreach($result as $row) {
+						echo '<table class="table table-bordered table-dark">
+							<tr><th>Make</th><td>'.$row['make'].'</td></tr>
+							<tr><th>Model</th><td>'.$row['model'].'</td></tr>
+							<tr><th>Year</th><td>'.$row['year'].'</td></tr>
+							<tr><th>Mileage</th><td>'.$row['mileage'].'</td></tr>
+							<tr><th>City</th><td>'.$row['city'].' ,'.$row['state'].'</td></tr>
+							<tr><th>Price</th><td>$'.$row['price'].'</td></tr>
+						</table>';
+					}
+				}
+				
+			?>
 		</div>
 	</div>
 	</div>
