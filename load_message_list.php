@@ -1,7 +1,9 @@
 <?php
 	include_once('db_conn.php');
+	session_start();
 	$conn = connect_to_db();
 	$user = $_POST['user'];
+	$_SESSION['user'] = $user;
 ?>
 <table id="inbox_list" class="table table-hover table-bordered">
 <?php

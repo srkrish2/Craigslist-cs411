@@ -1,7 +1,10 @@
 <?php
 include_once('db_conn.php');
+session_start();
 $conn = connect_to_db();
 $user = $_POST['user'];
+$_SESSION['user'] = $user;
+echo $_SESSION['user'];
 ?>
 <table class="table table-bordered table-dark" style="width:100%">
 <tr>

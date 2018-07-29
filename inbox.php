@@ -1,4 +1,8 @@
 <?php 
+	session_start();
+	if(!isset($_SESSION['user'])) {
+		$_SESSION['user'] = 'shahi2';
+	}
 	include_once('db_conn.php');
 	$conn = connect_to_db();
 ?>
@@ -44,9 +48,9 @@
 	    </ul>
 	    <span class="navbar-text">
 		Welcome, <select onchange=load_message_list() id="user">
-			<option value="shahi2">Teesh</option>
-			<option value="srkrish2">Sneha</option>
-			<option value="skchuen2">Sam</option>
+			<option value="shahi2" <?php if($_SESSION['user'] == 'shahi2') echo 'selected';?>>Teesh</option>
+			<option value="srkrish2" <?php if($_SESSION['user'] == 'srkrish2') echo 'selected';?>>Sneha</option>
+			<option value="skchuen2" <?php if($_SESSION['user'] == 'skchuen2') echo 'selected';?>>Sam</option>
 		</select>!
 	    </span>
 	  </div>
@@ -60,7 +64,7 @@
 			<div id="message_list">
 			<table id="inbox_list" class="table table-hover table-bordered">
 			<?php
-				$query = "SELECT DISTINCT post_id FROM messages WHERE sender = 'shahi2' OR receiver = 'shahi2'";
+				$query = "SELECT DISTINCT post_id FROM messages WHERE sender = '".$_SESSION['user']."' OR receiver = '".$_SESSION['user']."'";
 				$result = mysqli_query($conn,$query);
 				foreach($result as $row) {
 					echo '<tr class="table-light"><td class="message" onclick=load_message('.$row['post_id'].') id="msg_'.$row['post_id'].'">Message '.$row['post_id'].'</td></tr>';
@@ -73,13 +77,13 @@
 			<div class="col-12">
 			<br>
 			<div> 
-				<form>
+				<form onsubmit="return send_message()">
 				<div class="form-row">
 					<div class="col">
 						<input id="message_buffer" class="form-control mr-sm-2" placeholder="Send message">
 					</div>
 					<div class="col">
-						<button onclick=send_message() type="submit" class="btn btn-success">Send</button>
+						<button type="submit" class="btn btn-success">Send</button>
 					</div>
 				</div>
 				</form>
@@ -93,6 +97,7 @@
 </body>
 <script>
 	var current_post_id = '';
+	var message_interval = '';
 	function send_message() {
 		var message = $('#message_buffer').val();
 		var sender = $('#user').val();
@@ -105,11 +110,13 @@
 			post_id:current_post_id
 		},
 		function(data) {
-			alert(data);
+			load_message(current_post_id);
 		});
+		$('#message_buffer').val('');
 		return false;
 	}
 	function load_message_list() {
+		clearInterval(message_interval);
 		user = $('#user').val();
 		$.post("load_message_list.php",
 		{
@@ -123,6 +130,7 @@
 	}
 
 	function load_message(post_id) {
+		clearInterval(message_interval);
 		current_post_id = post_id;
 		var text = $('#msg_'+post_id).text();
 		var temp_text = '';
@@ -139,6 +147,7 @@
 		},
 		function(data) {
 			$('#message-content').html(data);
+			message_interval = setInterval(function() { load_message(post_id)}, 1000); 
 		});
 	}
 </script>

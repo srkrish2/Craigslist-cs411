@@ -1,4 +1,8 @@
 <?php
+session_start();
+if(!isset($_SESSION['user'])) {
+	$_SESSION['user'] = 'shahi2';
+}
 include_once('db_conn.php');
 $conn = connect_to_db();
 ?>
@@ -43,10 +47,10 @@ $conn = connect_to_db();
               </li>
             </ul>
             <span class="navbar-text">
-		welcome, <select onchange=change_user() id="user">
-			<option value="shahi2">Teesh</option>
-			<option value="srkrish2">Sneha</option>
-			<option value="skchuen2">Sam</option>
+		Welcome, <select onchange=change_user() id="user">
+			<option value="shahi2" <?php if($_SESSION['user'] == 'shahi2') echo 'selected';?>>Teesh</option>
+			<option value="srkrish2" <?php if($_SESSION['user'] == 'srkrish2') echo 'selected';?>>Sneha</option>
+			<option value="skchuen2" <?php if($_SESSION['user'] == 'skchuen2') echo 'selected';?>>Sam</option>
 		</select>!
             </span>
           </div>
@@ -71,7 +75,7 @@ $conn = connect_to_db();
 	<th>Post #</th><th>Make</th><th>Model</th><th>Year</th><th>Price</th><th>Mileage</th><th>City</th><th>State</th><th>VIN</th><th>Actions</th>
 </tr>
 <?php
-                        $query = "SELECT * FROM posts WHERE owner='shahi2'";
+                        $query = "SELECT * FROM posts WHERE owner='".$_SESSION['user']."'";
                         $result = mysqli_query($conn,$query);
 			foreach($result as $row) {
 				echo "<tr><td>".$row['post_id']."</td>

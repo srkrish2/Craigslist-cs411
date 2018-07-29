@@ -15,8 +15,8 @@
 				$receiver = $row['receiver'];
 			}
 			echo "Chatting with: <i id='message_receiver'>".$receiver."</i><br>";
-			if($row['read']) {
-				'<i>Message read</i>';
+			if($row['read_msg']) {
+				echo '<i>Message read</i>';
 			} else {
 				echo '<i>Message not read</i>';
 			}
@@ -26,6 +26,8 @@
 		if($user == $row['sender']) {
 			echo '<div class="d-flex p-2">'.$row['sender'].' ('.$row['time_stamp'].'):&nbsp<b>'.$row['message'].'</b></div><hr>';
 		} else {
+			$query_read = "UPDATE messages SET read_msg = 1 WHERE message_id = ".$row['message_id'];
+			if(mysqli_query($conn,$query_read) === FALSE) echo 'query failed';
 			echo '<div class="d-flex p-2 justify-content-end">'.$row['sender'].' ('.$row['time_stamp'].'):&nbsp<b>'.$row['message'].'</b></div><hr>';
 		}
 	}
