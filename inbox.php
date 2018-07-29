@@ -1,10 +1,14 @@
+<?php 
+	include_once('db_conn.php');
+	$conn = connect_to_db();
+?>
 <html>
 <head>
 	<title>Craigslist++</title>
-	<!-- jQuery CDN -->
-	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-		integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" 
-		crossorigin="anonymous"></script>
+        <!-- jQuery CDN -->
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+                integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+                crossorigin="anonymous"></script>
 	<!-- Bootstrap CDNs -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" 
 		integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" 
@@ -39,7 +43,11 @@
 	      </li>
 	    </ul>
 	    <span class="navbar-text">
-		Welcome, User1!
+		Welcome, <select onchange=load_message_list() id="user">
+			<option value="shahi2">Teesh</option>
+			<option value="srkrish2">Sneha</option>
+			<option value="skchuen2">Sam</option>
+		</select>!
 	    </span>
 	  </div>
 	</nav>
@@ -49,31 +57,95 @@
 			<br>
 			<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
 			<hr>
+			<div id="message_list">
 			<table id="inbox_list" class="table table-hover table-bordered">
-				<tr class="table-light"><td><b>Message 1</b></td></tr>
-				<tr class="table-light"><td>Message 2</td></tr>
-				<tr class="table-light"><td>Message 3</td></tr>
-				<tr class="table-light"><td>Message 4</td></tr>
-				<tr class="table-light"><td>Message 5</td></tr>
-				<tr class="table-light"><td>Message 6</td></tr>
+			<?php
+				$query = "SELECT DISTINCT post_id FROM messages WHERE sender = 'shahi2' OR receiver = 'shahi2'";
+				$result = mysqli_query($conn,$query);
+				foreach($result as $row) {
+					echo '<tr class="table-light"><td class="message" onclick=load_message('.$row['post_id'].') id="msg_'.$row['post_id'].'">Message '.$row['post_id'].'</td></tr>';
+				}
+			?>
 			</table>
+			</div>
 		</div>
 		<div class="col-9">
 			<div class="col-12">
 			<br>
-			<div id="message-content">
-			<p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, commodo vitae, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. Donec non enim in turpis pulvinar facilisis. Ut felis. Praesent dapibus, neque id cursus faucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis, accumsan porttitor, facilisis luctus, metus</p>	
-			<hr>
-			<p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.</p>
-			<hr>
-			<p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</p>
+			<div> 
+				<form>
+				<div class="form-row">
+					<div class="col">
+						<input id="message_buffer" class="form-control mr-sm-2" placeholder="Send message">
+					</div>
+					<div class="col">
+						<button onclick=send_message() type="submit" class="btn btn-success">Send</button>
+					</div>
+				</div>
+				</form>
+				<br>
+				<div id="message-content"></div>
 			</div>
 			</div>
 		</div>
 	</div>
 	</div>
 </body>
+<script>
+	var current_post_id = '';
+	function send_message() {
+		var message = $('#message_buffer').val();
+		var sender = $('#user').val();
+		var receiver = $('#message_receiver').text();
+		$.post("send_message.php",
+		{
+			message:message,
+			sender:sender,
+			receiver:receiver,
+			post_id:current_post_id
+		},
+		function(data) {
+			alert(data);
+		});
+		return false;
+	}
+	function load_message_list() {
+		user = $('#user').val();
+		$.post("load_message_list.php",
+		{
+			user:user 
+		},
+		function(data) {
+			$('#message_list').html(data);
+		});
+		$('#message-content').html('');
+		current_post_id = '';
+	}
+
+	function load_message(post_id) {
+		current_post_id = post_id;
+		var text = $('#msg_'+post_id).text();
+		var temp_text = '';
+		var user = $('#user').val();
+		$('.message').each(function () {
+			temp_text = $(this).text();
+			$(this).html(temp_text);
+		});
+		$('#msg_'+post_id).html('<b>'+text+'</b>');
+		$.post("load_message.php",
+		{
+			post_id: post_id,
+			user:user 
+		},
+		function(data) {
+			$('#message-content').html(data);
+		});
+	}
+</script>
 <style>
+td {
+	cursor:pointer;
+}
 #inbox_list {
 	border-spacing: 15px;
 }

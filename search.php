@@ -7,10 +7,52 @@ if(!empty($_GET['post_id'])) {
 ?>
 <html>
 <head>
-	<?php include('./header_stuff.php'); ?>
+        <!-- jQuery CDN -->
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+                integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+                crossorigin="anonymous"></script>
+	<!-- Bootstrap CDNs -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+	  integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+	  crossorigin="anonymous"></script>
+	<link	rel="stylesheet"
+	  href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+	  integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+	  crossorigin="anonymous">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+	  integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+	  crossorigin="anonymous"></script>
 </head>
 <body>
-	<?php include('./nav_bar.php'); ?>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+	  <a class="navbar-brand" href="#">Craigslist++</a>
+	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+	    <span class="navbar-toggler-icon"></span>
+	  </button>
+	  <div class="collapse navbar-collapse" id="navbarNav">
+	    <ul class="navbar-nav mr-auto">
+	      <li class="nav-item">
+	  <a class="nav-link" href="./index.php">Home</a>
+	      </li>
+	      <li class="nav-item active">
+	  <a class="nav-link" href="./search.php">Search<span class="sr-only">(current)</span></a>
+	      </li>
+	      <li class="nav-item">
+	  <a class="nav-link" href="./manage.php">Manage</a>
+	      </li>
+	      <li class="nav-item">
+	  <a class="nav-link" href="./inbox.php">Inbox</a>
+	      </li>
+	    </ul>
+	    <span class="navbar-text">
+		welcome, <select onchange=change_user() id="user">
+			<option value="shahi2">Teesh</option>
+			<option value="srkrish2">Sneha</option>
+			<option value="skchuen2">Sam</option>
+		</select>!
+	    </span>
+	  </div>
+	</nav>
 	<div class="container-fluid">
 	<div class="row">
 		<div class="col-3" style="background-color:#13294b; height: 100%">
@@ -30,7 +72,7 @@ if(!empty($_GET['post_id'])) {
 				<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
 			</div>
 			<hr>
-			<h1>Post #<?php echo $post_id?></h1>
+			<h1 id="post_id">Post #<?php echo $post_id?></h1>
 			<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
 			  <ol class="carousel-indicators">
 			    <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
@@ -70,6 +112,8 @@ if(!empty($_GET['post_id'])) {
 							<tr><th>Mileage</th><td>'.$row['mileage'].'</td></tr>
 							<tr><th>City</th><td>'.$row['city'].' ,'.$row['state'].'</td></tr>
 							<tr><th>Price</th><td>$'.$row['price'].'</td></tr>
+							<tr><th>Owner</th><td>'.$row['owner'].'</td></tr>
+							<tr><td colspan=2><button onclick=message_user("'.$row['owner'].'") type="button" class="btn btn-success">Message</button></td></tr>
 						</table>';
 					}
 				}
@@ -79,6 +123,21 @@ if(!empty($_GET['post_id'])) {
 	</div>
 	</div>
 </body>
+<script>
+function message_user(user) {
+	var post_id = $('#post_id').text().split('#')[1]
+	var sender = $('#user').val();
+	$.post("message_user_begin.php",
+	{
+		post_id:post_id,
+		sender:sender,
+		receiver:user
+	},
+	function(data) {
+		alert(data);
+	});
+}
+</script>
 <style>
 #inbox_list {
 	border-spacing: 15px;

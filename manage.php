@@ -43,13 +43,11 @@ $conn = connect_to_db();
               </li>
             </ul>
             <span class="navbar-text">
-                <?php
-			$query = "SELECT * FROM users WHERE uname='shahi2'";
-			$result = mysqli_query($conn,$query);
-			foreach($result as $row) {
-				echo "Welcome, ".$row['name']."!";
-			}
-		?>
+		welcome, <select onchange=change_user() id="user">
+			<option value="shahi2">Teesh</option>
+			<option value="srkrish2">Sneha</option>
+			<option value="skchuen2">Sam</option>
+		</select>!
             </span>
           </div>
         </nav>
@@ -67,7 +65,7 @@ $conn = connect_to_db();
 
 <div id = "selling" class ="content-manage" button onclick=mysellfunc()><h1>Listings</h1>
 <hr>
-
+<div id="posts">
 <table class="table table-bordered table-dark" style="width:100%">
 <tr>
 	<th>Post #</th><th>Make</th><th>Model</th><th>Year</th><th>Price</th><th>Mileage</th><th>City</th><th>State</th><th>VIN</th><th>Actions</th>
@@ -102,9 +100,22 @@ $conn = connect_to_db();
 <tr>
 	<td></td><td id="make_new" class="editable newpost"></td><td id="model_new" class="editable newpost"></td><td id="year_new" class="editable newpost"></td><td id="price_new" class="editable newpost"></td><td id="miles_new" class="editable newpost"></td><td id="city_new" class="editable newpost"></td><td id="state_new" class="editable newpost"></td><td id="vin_new" class="editable newpost"></td><td><button onclick=add_post() type="button" class="btn btn-success">Add</button></td>
 </tr>
+</table>
+</div>
 </div>
 <div id = "watching" class = "content-manage" button onclick=mywatchfunc() style = "display:none">Watching</div>
 <script>
+function change_user() {
+	var user = $('#user').val();
+	$.post("change_user.php",
+	{
+		user: user
+	},
+	function(data) {
+		$('#posts').html(data);
+	});
+}
+
 function sellandwatchfunc(div_id){
 	$(".content-manage").hide();
 	$("#"+div_id).show();
