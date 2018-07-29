@@ -161,6 +161,13 @@
 			?>
 		</div>
 	</div>
+		<h2> Enter distance (in miles): </hs>
+
+		<form action="/action_page.php">
+		First name:<br>
+		<input type="text" name="firstname" value="michey">
+		<br>
+	
 	</div>
 </body>
 <script>

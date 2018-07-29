@@ -18,9 +18,9 @@
 			$flag=0;
 		}
 		if($user == $row['sender']) {
-			echo $row['sender'].': '.$row['message'].'<hr>';
+			echo '<div class="d-flex p-2">'.$row['sender'].' ('.$row['time_stamp'].'): '.$row['message'].'</div><hr>';
 		} else {
-			echo '<span style="float:right;">'.$row['sender'].': '.$row['message'].'</span><hr>';
+			echo '<div class="d-flex p-2 justify-content-end">'.$row['sender'].': '.$row['message'].'</div><hr>';
 		}
 	}
 ?>
