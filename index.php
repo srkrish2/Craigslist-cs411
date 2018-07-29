@@ -53,7 +53,7 @@ $conn = connect_to_db();
 		</thead>
 		<tbody>
 			<?php
-				$query = "SELECT * FROM posts_2 WHERE post_id < 20";
+				$query = "SELECT * FROM posts WHERE post_id < 20";
 				$result = mysqli_query($conn,$query);
 				foreach($result as $row) {
 					echo '<tr>

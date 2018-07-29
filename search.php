@@ -1,12 +1,65 @@
+<?php
+	include_once('./db_conn.php');
+	$conn = connect_to_db();
+
+	$q_year = "SELECT DISTINCT Year FROM posts";
+	$filter_year = mysqli_query($conn,$query);
+	$q_city = "SELECT DISTINCT City FROM posts";
+	$filter_city = mysqli_query($conn,$query);
+	$q_state = "SELECT DISTINCT State FROM posts";
+	$filter_state = mysqli_query($conn,$query);
+	$q_price_max = "SELECT MAX(Price) FROM posts";
+	$filter_price_max = mysqli_query($conn,$query);
+	$q_price_min = "SELECT MIN(Price) FROM posts";
+	$filter_price_min = mysqli_query($conn,$query);
+	$q_miles_max = "SELECT MAX(Miles) FROM posts";
+	$filter_miles_max = mysqli_query($conn,$query);
+	$q_miles_min = "SELECT MIN(Miles) FROM posts";
+	$filter_miles_min = mysqli_query($conn,$query);
+	$q_location = "SELECT DISTINCT Location FROM posts";
+	$filter_location = mysqli_query($conn,$query);
+	$q_make = "SELECT DISTINCT Make FROM posts";
+	$filter_make = mysqli_query($conn,$query);
+	$q_model = "SELECT DISTINCT Model FROM posts";
+	$filter_model = mysqli_query($conn,$query);
+?>
+
 <html>
 <head>
 	<?php include('./header_stuff.php'); ?>
 </head>
 <body>
-	<?php include('./nav_bar.php'); ?>
+	<!-- navigation bar -->
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+	  <a class="navbar-brand" href="#">Craigslist++</a>
+	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+	    <span class="navbar-toggler-icon"></span>
+	  </button>
+	  <div class="collapse navbar-collapse" id="navbarNav">
+	    <ul class="navbar-nav mr-auto">
+	      <li class="nav-item">
+	  <a class="nav-link" href="#">Home</a>
+	      </li>
+	      <li class="nav-item active">
+	  <a class="nav-link" href="#">Search<span class="sr-only">(current)</span></a>
+	      </li>
+	      <li class="nav-item">
+	  <a class="nav-link" href="#">Manage</a>
+	      </li>
+	      <li class="nav-item">
+	  <a class="nav-link" href="#">Inbox</a>
+	      </li>
+	    </ul>
+	    <span class="navbar-text">
+	  Welcome, User1!
+	    </span>
+	  </div>
+	</nav>
+
 	<div class="container-fluid">
 	<div class="row">
 		<div class="col-3" style="background-color:#13294b; height: 100%">
+			<?php echo $filter_year; ?>
 			<br>
 			<table id="inbox_list" class="table table-hover table-bordered">
 				<tr class="table-light"><td><input type="checkbox">  Filter 1</td></tr>
