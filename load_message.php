@@ -3,7 +3,7 @@
 	$conn = connect_to_db();
 	$post_id = $_POST['post_id'];
 	$user = $_POST['user'];
-	$query = "SELECT * FROM messages WHERE post_id = ".$post_id;
+	$query = "SELECT * FROM messages WHERE post_id = ".$post_id." ORDER BY time_stamp DESC";
 	$result = mysqli_query($conn,$query);
 	$flag = 1;
 	$receiver = 'placehoder';
@@ -14,13 +14,19 @@
 			} else {
 				$receiver = $row['receiver'];
 			}
-			echo "Chatting with: <i id='message_receiver'>".$receiver."</i><hr>";
+			echo "Chatting with: <i id='message_receiver'>".$receiver."</i><br>";
+			if($row['read']) {
+				'<i>Message read</i>';
+			} else {
+				echo '<i>Message not read</i>';
+			}
+			echo "<hr>";
 			$flag=0;
 		}
 		if($user == $row['sender']) {
-			echo '<div class="d-flex p-2">'.$row['sender'].' ('.$row['time_stamp'].'): '.$row['message'].'</div><hr>';
+			echo '<div class="d-flex p-2">'.$row['sender'].' ('.$row['time_stamp'].'):&nbsp<b>'.$row['message'].'</b></div><hr>';
 		} else {
-			echo '<div class="d-flex p-2 justify-content-end">'.$row['sender'].': '.$row['message'].'</div><hr>';
+			echo '<div class="d-flex p-2 justify-content-end">'.$row['sender'].' ('.$row['time_stamp'].'):&nbsp<b>'.$row['message'].'</b></div><hr>';
 		}
 	}
 ?>
