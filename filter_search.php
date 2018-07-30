@@ -85,21 +85,32 @@
 
 
 	$result = mysqli_query($conn,$query);
+	$return = '<table class="table table-dark"';
+	$return = $return.' '.'<thead><tr>
+		<th scope="col">Post #</th>
+		<th scope="col">Make</th>
+      		<th scope="col">Model</th>
+      		<th scope="col">Year</th>
+		<th scope="col">Price</th>
+		<th scope="col">Milage</th>
+		<th scope="col">City</th>
+		<th scope="col">State</th>
+		<th scope="col">VIN</th>
+		</tr></thead>';
 	foreach($result as $row) {
-		if($flag) {
-			if($user == $row['receiver']) {
-				$receiver = $row['sender'];
-			} else {
-				$receiver = $row['receiver'];
-			}
-			echo "Chatting with: <i id='message_receiver'>".$receiver."</i><hr>";
-			$flag=0;
-		}
-		if($user == $row['sender']) {
-			echo $row['sender'].': '.$row['message'].'<hr>';
-		} else {
-			echo '<span style="float:right;">'.$row['sender'].': '.$row['message'].'</span><hr>';
-		}
+		$return = $return.' '."<tr><td>".$row['post_id']."</td>
+			<td id='make_".$row['post_id']."' class='".$row['post_id']." editable'>".$row['make']."</td>
+			<td id='model_".$row['post_id']."' class='".$row['post_id']." editable'>".$row['model']."</td>
+			<td id='year_".$row['post_id']."' class='".$row['post_id']." editable'>".$row['year']."</td>
+			<td id='price_".$row['post_id']."' class='".$row['post_id']." editable'>".$row['price']."</td>
+			<td id='miles_".$row['post_id']."' class='".$row['post_id']." editable'>".$row['mileage']."</td>
+			<td id='city_".$row['post_id']."' class='".$row['post_id']." editable'>".$row['city']."</td>
+			<td id='state_".$row['post_id']."' class='".$row['post_id']." editable'>".$row['state']."</td>
+			<td id='vin_".$row['post_id']."' class='".$row['post_id']." editable'>".$row['VIN']."</td><td>
+			</td></tr>";
 	}
+	$return = $return.' '. "</table>";
+	echo $return;
+
 ?>
 
