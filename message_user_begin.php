@@ -3,6 +3,10 @@ include_once('db_conn.php');
 $conn = connect_to_db();
 $sender = $_POST['sender'];
 $receiver = $_POST['receiver'];
+if($receiver == '') {
+	echo 'This post does not have an owner (TEST DATA ONLY)';
+	die;
+}
 if($sender == $receiver) {
 	echo 'This is your own post';
 	die;

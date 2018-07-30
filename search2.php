@@ -2,29 +2,27 @@
 	include_once('./db_conn.php');
 	$conn = connect_to_db();
 
-	$q_year = "SELECT DISTINCT Year FROM posts";
-	$filter_year = mysqli_query($conn,$query);
-	$q_city = "SELECT DISTINCT City FROM posts";
-	$filter_city = mysqli_query($conn,$query);
-	$q_state = "SELECT DISTINCT State FROM posts";
-	$filter_state = mysqli_query($conn,$query);
-	$q_price_max = "SELECT MAX(Price) FROM posts";
-	$filter_price_max = mysqli_query($conn,$query);
-	$q_price_min = "SELECT MIN(Price) FROM posts";
-	$filter_price_min = mysqli_query($conn,$query);
-	$q_miles_max = "SELECT MAX(Miles) FROM posts";
-	$filter_miles_max = mysqli_query($conn,$query);
-	$q_miles_min = "SELECT MIN(Miles) FROM posts";
-	$filter_miles_min = mysqli_query($conn,$query);
-	$q_location = "SELECT DISTINCT Location FROM posts";
-	$filter_location = mysqli_query($conn,$query);
-	$q_make = "SELECT DISTINCT Make FROM posts";
-	$filter_make = mysqli_query($conn,$query);
-	$q_model = "SELECT DISTINCT Model FROM posts";
-	$filter_model = mysqli_query($conn,$query);
+	$q_year = "SELECT DISTINCT year FROM posts";
+	$filter_year = mysqli_query($conn,$q_year);
+	$q_city = "SELECT DISTINCT city FROM posts";
+	$filter_city = mysqli_query($conn,$q_city);
+	$q_state = "SELECT DISTINCT state FROM posts";
+	$filter_state = mysqli_query($conn,$q_state);
+	$q_price_max = "SELECT MAX(price) FROM posts";
+	$filter_price_max = mysqli_query($conn,$q_price_max);
+	$q_price_min = "SELECT MIN(price) FROM posts";
+	$filter_price_min = mysqli_query($conn,$q_price_min);
+	$q_miles_max = "SELECT MAX(miles) FROM posts";
+	$filter_miles_max = mysqli_query($conn,$q_miles_max);
+	$q_miles_min = "SELECT MIN(miles) FROM posts";
+	$filter_miles_min = mysqli_query($conn,$q_miles_min);
+	$q_model = "SELECT DISTINCT model FROM posts";
+	$filter_model = mysqli_query($conn,$q_model);
 
 	if(!empty($_GET['post_id'])) {
 		$post_id = $_GET['post_id'];
+	} else {
+
 	}
 ?>
 <html>
@@ -44,6 +42,7 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
 	  integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
 	  crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 </head>
 <body>
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -78,21 +77,91 @@
 	<div class="container-fluid">
 	<div class="row">
 		<div class="col-3" style="background-color:#13294b; height: 100%">
-			<?php echo $filter_year; ?>
 			<br>
 			<table id="inbox_list" class="table table-hover table-bordered">
-				<tr class="table-light"><td><input type="checkbox">  Filter 1</td></tr>
-				<tr class="table-light"><td><input type="checkbox">  Filter 2</td></tr>
-				<tr class="table-light"><td><input type="checkbox">  Filter 3</td></tr>
-				<tr class="table-light"><td><input type="checkbox">  Filter 4</td></tr>
-				<tr class="table-light"><td><input type="checkbox">  Filter 5</td></tr>
-				<tr class="table-light"><td><input type="checkbox">  Filter 6</td></tr>
+				<tr class='table-light'>
+					<td>
+						<button type="button" class="btn btn-light" onclick="openclose('makes')">Make</button>
+						<div id='makes' class="w3-container w3-hide pre-scrollable">
+							<?php
+								$query = "SELECT DISTINCT make FROM posts";
+								$result = mysqli_query($conn,$query);
+								foreach($result as $row) {
+									echo '<div class="form-check">
+									  <input class="make-class" type="checkbox" value="'.$row['make'].'" id="defaultCheck1">
+									  <label class="form-check-label" for="defaultCheck1">'
+									    .$row['make'].
+									  '</label>
+									</div>';
+								}
+							?>
+						</div>
+					</td>
+				</tr>
+				<tr class="table-light">
+					<td>
+                                                <button type="button" class="btn btn-light" onclick="openclose('models')">Model</button>
+                                                <div id='models' class="w3-container w3-hide pre-scrollable">
+                                                        <?php
+                                                                foreach($filter_model as $row) {
+                                                                        echo '<div class="form-check">
+                                                                          <input class="model-class" type="checkbox" value="'.$row['model'].'" id="defaultCheck1">
+                                                                          <label class="form-check-label" for="defaultCheck1">'
+                                                                            .$row['model'].
+                                                                          '</label>
+                                                                        </div>';
+                                                                }
+                                                        ?>
+                                                </div>
+                                        </td>
+                                </tr>
+				<tr class="table-light">
+					<td>
+                                                <button type="button" class="btn btn-light" onclick="openclose('cities')">City, State</button>
+                                                <div id='cities' class="w3-container w3-hide pre-scrollable">
+                                                        <?php
+                                                                foreach($filter_city as $row) {
+                                                                        echo '<div class="form-check">
+                                                                          <input class="city-class" type="checkbox" value="'.$row['city'].'" id="defaultCheck1">
+                                                                          <label class="form-check-label" for="defaultCheck1">'
+                                                                            .$row['city'].
+                                                                          '</label>
+                                                                        </div>';
+                                                                }
+                                                        ?>
+                                                </div>
+                                        </td>
+                                </tr>
+				<tr class="table-light">
+					<td>
+                                                <button type="button" class="btn btn-light" onclick="openclose('years')">Year</button>
+                                                <div id='years' class="w3-container w3-hide pre-scrollable">
+							<div class="form-inline">
+								<input type='text' id="yearmin" placeholder='Min (eg 1999)'>
+								<input type='text' id="yearmax" placeholder='Max(eg 2015)'>
+							</div> 
+                                               </div>
+                                        </td>
+                                </tr>
+				<tr class="table-light">
+					<td>
+                                                <button type="button" class="btn btn-light" onclick="openclose('price_range')">Price</button>
+                                                <div id='price_range' class="w3-container w3-hide pre-scrollable">
+							<div class="form-inline">
+								<input type='text' id="pricemin" placeholder='Min (eg 1999)'>
+                                                                <input type='text' id="pricemax" placeholder='Max(eg 2015)'>
+							</div>
+                                                </div>
+                                        </td>
+                                </tr>
 			</table>
+			<button type='submit' id='filter_search' onclick=filtersearch() class='btn btn-primary'>Search</button>
 		</div>
 		<div class="col-9">
 			<br>
-			<div class="col-12">
-				<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+			<div class="col-12 form-inline">
+					<input id='text_for_search' class="form-control mr-sm-2"  placeholder="Search">
+					<button type="submit" onclick=text_search() class="btn btn-success">Search</button>
 			</div>
 			<hr>
 			<h1 id="post_id">Post #<?php echo $post_id?></h1>
@@ -123,6 +192,7 @@
 			  </a>
 			</div>
 			<hr>
+			<div id='post_search_result'></div>
 			<?php
 				if($post_id) {
 					$query = 'SELECT * FROM posts WHERE post_id = '.$post_id;
@@ -165,6 +235,67 @@ function message_user(user) {
 	},
 	function(data) {
 		alert(data);
+	});
+}
+
+function openclose(id) {
+    var x = document.getElementById(id);
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+    } else { 
+        x.className = x.className.replace(" w3-show", "");
+    }
+}
+
+function text_search(){
+	var text = $('#text_for_search').val();
+	if ($.isNumeric(text)) {
+		$.post("get_post.php",{
+			post_id:text
+		},
+		function(data){
+			$('#post_search_result').html(data);
+		}
+		);
+	}
+	else {
+		$.post("full_search.php", {
+			text: text
+		},
+		function(data){
+			$('#post_search_result').html(data);
+		});
+	}
+}
+
+function filtersearch(){
+	var price_max = $('#pricemax').val()
+	var price_min = $('#pricemin').val()
+	var year_min = $('#yearmin').val()
+	var year_max = $('#yearmax').val()
+	var makes = [];
+	var city = [];
+	var models = [];
+	$.each($(".make-class:checkbox:checked"), function(){            
+                makes.push($(this).val());
+            });
+	$.each($(".model-class:checkbox:checked"), function(){
+                models.push($(this).val());
+            }); 
+	$.each($(".city-class:checkbox:checked"), function(){
+                city.push($(this).val());
+            });
+	$.post("filter_search.php", {
+		price_min: price_min,
+		price_max: price_max,
+		year_min: year_min,
+		year_max: year_max,
+		makes: makes,
+		city: city,
+		models: models
+	},
+	function(data){
+		$('#post_search_result').html(data);
 	});
 }
 </script>

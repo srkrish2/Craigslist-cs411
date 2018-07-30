@@ -1,8 +1,8 @@
 <?php
 	include_once('./db_conn.php');
 	$conn = connect_to_db();
-
-	$q_year = "SELECT DISTINCT Year FROM posts";
+/*
+	$q_year = "SELfECT DISTINCT Year FROM posts";
 	$filter_year = mysqli_query($conn,$query);
 	$q_city = "SELECT DISTINCT City FROM posts";
 	$filter_city = mysqli_query($conn,$query);
@@ -22,13 +22,46 @@
 	$filter_make = mysqli_query($conn,$query);
 	$q_model = "SELECT DISTINCT Model FROM posts";
 	$filter_model = mysqli_query($conn,$query);
+*/
+	
+	$q_stateandcity = "SELECT DISTINCT City, State FROM posts";
+	$filter_stateandcity = mysqli_query($conn,$q_stateandcity); 
+	$str_all = '';
+	foreach($filter_stateandcity as $row)
+	{
 
+		$str_all .= str_replace(' ', '+',$row['City']).",".$row['State'].'|'; 
+	}
+	$str_all = substr($str_all,0,-1);
+
+
+
+	
+
+	
 	if(!empty($_GET['post_id'])) {
 		$post_id = $_GET['post_id'];
 	}
-?>
+
+	$forpostid = "SELECT * FROM posts WHERE post_id = '.$post_id'";
+        $q_forOrigin = mysqli_query($conn,$forpostid);
+	$dest = '';
+	foreach($q_forOrigin as $row){
+
+	$dest = str_replace(' ','+',$row['City']).",".$row['State'].'|';
+	$str_api = 'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='.$dest.'&destinations='.$str_all.'&key=AIzaSyAdU4wVVo5QkSWD5SXzRIWhHXPhMCmAKJg';
+	echo $str_api;
+	$data = file_get_contents($str_api);
+	
+	$parsed = json_decode($data);
+		
+	echo var_dump($parsed);
+?>	
+	
 <html>
 <head>
+
+
         <!-- jQuery CDN -->
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"
                 integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
@@ -45,8 +78,6 @@
 	  integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
 	  crossorigin="anonymous"></script>
 
-	
-	<!--Google Maps API-->
 	
 	
 </head>
@@ -111,8 +142,6 @@
 			    <div class="carousel-item active">
 			      <img class="d-block w-40" src="https://picsum.photos/200/300/?image=0" alt="First slide">
 			    </div>
-			    <div class="carousel-item">
-			      <img class="d-block w-40" src="https://picsum.photos/200/300/?image=1" alt="Second slide">
 			    </div>
 			    <div class="carousel-item">
 			      <img class="d-block w-40" src="https://picsum.photos/200/300/?image=2" alt="Third slide">
@@ -148,16 +177,9 @@
 
 			?>
 		</div>
-	</div>
-		<h2> Enter distance (in miles): </hs>
 
-		<form action="/action_page.php">
-		First name:<br>
-		<input type="text" name="firstname">
-		<button onclick ="submit" value = "submit">
-		<br>
+
 	
-	</div>
 </body>
 <script>
 function message_user(user) {

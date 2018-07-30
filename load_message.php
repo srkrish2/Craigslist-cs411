@@ -3,7 +3,7 @@
 	$conn = connect_to_db();
 	$post_id = $_POST['post_id'];
 	$user = $_POST['user'];
-	$query = "SELECT * FROM messages WHERE post_id = ".$post_id." ORDER BY time_stamp DESC";
+	$query = "SELECT * FROM user_msgs WHERE post_id = ".$post_id." ORDER BY time_stamp DESC";
 	$result = mysqli_query($conn,$query);
 	$flag = 1;
 	$receiver = 'placehoder';
@@ -24,11 +24,11 @@
 			$flag=0;
 		}
 		if($user == $row['sender']) {
-			echo '<div class="d-flex p-2">'.$row['sender'].' ('.$row['time_stamp'].'):&nbsp<b>'.$row['message'].'</b></div><hr>';
+			echo '<div class="d-flex p-2">'.$row['sender_name'].' ('.$row['time_stamp'].'):&nbsp<b>'.$row['message'].'</b></div><hr>';
 		} else {
 			$query_read = "UPDATE messages SET read_msg = 1 WHERE message_id = ".$row['message_id'];
 			if(mysqli_query($conn,$query_read) === FALSE) echo 'query failed';
-			echo '<div class="d-flex p-2 justify-content-end">'.$row['sender'].' ('.$row['time_stamp'].'):&nbsp<b>'.$row['message'].'</b></div><hr>';
+			echo '<div class="d-flex p-2 justify-content-end">'.$row['sender_name'].' ('.$row['time_stamp'].'):&nbsp<b>'.$row['message'].'</b></div><hr>';
 		}
 	}
 ?>

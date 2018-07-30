@@ -6,10 +6,13 @@ $sender = $_POST['sender'];
 $receiver = $_POST['receiver'];
 $post_id = $_POST['post_id'];
 echo $message.$sender.$receiver.$post_id;
-$query = "INSERT INTO messages (message, sender, receiver, post_id) VALUES ('".$message."','".$sender."','".$receiver."',".$post_id.")";
-if(mysqli_query($conn,$query) === TRUE) {
+$query = $conn->prepare("INSERT INTO messages (message, sender, receiver, post_id) VALUES (?,?,?,?)");
+$query->bind_param("sssi",$message,$sender,$receiver,$post_id);
+if($query->execute()) {
 	echo 'Message sent';
 } else {
 	echo 'Message failed to send'.mysqli_error($conn);
 }
+$query->close();
+$conn->close();
 ?>

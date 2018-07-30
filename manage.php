@@ -70,7 +70,7 @@ $conn = connect_to_db();
 <div id = "selling" class ="content-manage" button onclick=mysellfunc()><h1>Listings</h1>
 <hr>
 <div id="posts">
-<table class="table table-bordered table-dark" style="width:100%">
+<table id="manage_table" class="table table-bordered table-dark" style="width:100%">
 <tr>
 	<th>Post #</th><th>Make</th><th>Model</th><th>Year</th><th>Price</th><th>Mileage</th><th>City</th><th>State</th><th>VIN</th><th>Actions</th>
 </tr>
@@ -102,7 +102,7 @@ $conn = connect_to_db();
                         }
                 ?>
 <tr>
-	<td></td><td id="make_new" class="editable newpost"></td><td id="model_new" class="editable newpost"></td><td id="year_new" class="editable newpost"></td><td id="price_new" class="editable newpost"></td><td id="miles_new" class="editable newpost"></td><td id="city_new" class="editable newpost"></td><td id="state_new" class="editable newpost"></td><td id="vin_new" class="editable newpost"></td><td><button onclick=add_post() type="button" class="btn btn-success">Add</button></td>
+	<td></td><td id="make_new" class="editable newpost"></td><td id="model_new" class="editable newpost"></td><td id="year_new" class="editable newpost"></td><td id="price_new" class="editable newpost"></td><td id="miles_new" class="editable newpost"></td><td id="city_new" class="editable newpost"></td><td id="state_new" class="editable newpost"></td><td id="vin_new" class="editable newpost"></td><td><button onclick=add_post() type="button" class="btn btn-success">Add</button><button onclick=edit_all() type="button" class="btn btn-primary">Save All</button></td>
 </tr>
 </table>
 </div>
@@ -155,10 +155,57 @@ function edit_post(post_id) {
 		state: state,
 		vin: vin
 	  },
-	   function(data) {
+	  function(data) {
 	  	alert(data);
 	  });
 		
+}
+
+function edit_all() {
+	var post_id_arr = [];
+	var make_arr = [];
+	var model_arr = [];
+	var year_arr = [];
+	var price_arr = [];
+	var miles_arr = [];
+	var city_arr = [];
+	var state_arr = [];
+	var vin_arr = [];	
+	$('.editable').each(function() {
+		if($('#edit_'+this.id)) {	
+			$(this).text($('#edit_'+this.id).val());
+		}
+	});
+	var post_id = '';
+	$('#manage_table tr').each(function() {
+		post_id = $(this).find('td').eq(0).text();
+		if(post_id != 'Post #' && post_id != '') {
+			post_id_arr.push(post_id);
+			make_arr.push($('#make_'+post_id).text());
+			model_arr.push($('#model_'+post_id).text().trim());
+			year_arr.push($('#year_'+post_id).text());
+			price_arr.push($('#price_'+post_id).text());
+			miles_arr.push($('#miles_'+post_id).text());
+			city_arr.push($('#city_'+post_id).text());
+			state_arr.push($('#state_'+post_id).text());
+			vin_arr.push($('#vin_'+post_id).text());
+		}
+	});
+	$.post("edit_post_batch.php",
+	  {
+		post_id: post_id_arr,
+		make: make_arr,
+		model: model_arr,
+		year: year_arr,
+		price: price_arr,
+		miles: miles_arr,
+		city: city_arr,
+		state: state_arr,
+		vin: vin_arr
+	  },
+	  function(data) {
+	  	alert(data);
+	  });
 }
 
 function delete_post(post_id) {
