@@ -107,7 +107,7 @@
 		echo $conn->error;
 		die;
 	}
-	$return = '<table class="table table-dark"';
+	$return = '<table class="table table-dark table-bordered"';
 	$return = $return.' '.'<thead><tr>
 		<th scope="col">Post #</th>
 		<th scope="col">Make</th>
@@ -128,8 +128,8 @@
 			<td id='miles_".$row['post_id']."' class='".$row['post_id']." editable'>".$row['mileage']."</td>
 			<td id='city_".$row['post_id']."' class='".$row['post_id']." editable'>".$row['city']."</td>
 			<td id='state_".$row['post_id']."' class='".$row['post_id']." editable'>".$row['state']."</td>
-			<td id='vin_".$row['post_id']."' class='".$row['post_id']." editable'>".$row['VIN']."</td><td>
-			</td></tr>";
+			<td id='vin_".$row['post_id']."' class='".$row['post_id']." editable'>".$row['VIN']."</td>
+			<td><button onclick=redir('".$row['post_id']."') class='btn btn-success' type='button'>View</button></td></tr>";
 	}
 	$return = $return.' '. "</table>";
 	echo $return;

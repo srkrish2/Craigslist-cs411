@@ -1,4 +1,8 @@
 <?php
+	session_start();
+	if(!isset($_SESSION['user'])) {
+		$_SESSION['user'] = 'shahi2';
+	}
 	include_once('./db_conn.php');
 	$conn = connect_to_db();
 
@@ -19,10 +23,13 @@
 	$q_model = "SELECT DISTINCT model FROM posts";
 	$filter_model = mysqli_query($conn,$q_model);
 
-	if(!empty($_GET['post_id'])) {
-		$post_id = $_GET['post_id'];
-	}
-
+if(!empty($_GET['post_id'])) {
+	$post_id = $_GET['post_id'];
+	$query_find = 'SELECT * FROM posts WHERE post_id = '.$post_id;
+	$result_find = mysqli_query($conn,$query_find);
+	$row_find = mysqli_fetch_assoc($result_find);
+	
+/*
 	$forpostid = "SELECT * FROM posts WHERE post_id = '".$post_id."'";
         $q_forOrigin = mysqli_query($conn,$forpostid);
 	foreach($q_forOrigin as $row){
@@ -47,14 +54,14 @@
 		$i++;
 	}
 	$str_all = substr($str_all,0,-1);
-	/*str_all contains the origin and destinations formatted for the request URL to the
-	google Distance matrix api*/
+	//str_all contains the origin and destinations formatted for the request URL to the
+	//google Distance matrix api
 
 	array_push($str_all_arr,$str_all);
 	//here we parse each block of data we get from each request
 
 	foreach($str_all_arr as $str_all) {
-		$str_api = 'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='.$dest.'&destinations='.$str_all.'&key=AIzaSyA_w7Njzw4kXFRwXuYrsJTcZYiIP0q4Djg';
+		$str_api = 'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='.$dest.'&destinations='.$str_all.'&key=AIzaSyCHoJ5zWQ0TDTa7N75WhP2R1vQW84Tshd0';
 		$data = file_get_contents($str_api);
 		$parsed = json_decode($data,true);
 
@@ -83,7 +90,7 @@
 	$curr_min_array = array();
 	$curr_min_index = 0;
 	$curr_address = array();
-	for($i=0;$i<10;$i++){
+	for($i=0;$i<25;$i++){
 		$curr_min_array = array_keys($total_distance, min(array_filter($total_distance)));
 		$curr_min_index = $curr_min_array[0];
 		$curr_address = explode(",",$total_addresses[$curr_min_index]);
@@ -101,13 +108,26 @@
 		array_push($prices,$row["AVG(price)"]);
 	}
 	//echo var_dump($prices);
-	//echo var_dump($min_array_addresses);
+	//echo var_dump($min_array_of_cities);
 	$dataPoints = array();
-	for($i=0;$i<10;$i++) {
+	for($i=0;$i<25;$i++) {
 		array_push($dataPoints,array("y" => (float)$prices[$i], "label" => $min_array_of_cities[$i]));
 	}
+*/
 	//echo var_dump($dataPoints);
+	$dataPoints2 = array();
+	$query = "SELECT make,COUNT(make) FROM posts WHERE city = '".$row_find['city']."' GROUP BY make";
+	$result = mysqli_query($conn,$query);
+	foreach($result as $row) {
+		array_push($dataPoints2,array("y" => (float)$row['COUNT(make)'], "label" => $row['make']));
+	}
 
+	$dataPoints3 = array();
+	$query = "SELECT state,AVG(price) FROM posts WHERE make = '".$row_find['make']."' GROUP BY state ORDER BY state";
+	$result = mysqli_query($conn,$query);
+	foreach($result as $row) {
+		array_push($dataPoints3,array("y" => (float)$row['AVG(price)'], "label" => $row['state']));
+	}
 	/*$dataPoints = array(
 		array("y" => 3373.64, "label" => "Germany" ),
 		array("y" => 2435.94, "label" => "France" ),
@@ -118,6 +138,7 @@
 		array("y" => 612.453, "label" => "Netherlands" )
 	);
 	*/
+}
 ?>
 
 <html>
@@ -143,22 +164,38 @@
 	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <script>
 window.onload = function () {
-	var chart = new CanvasJS.Chart("chartContainer", {
+	var chart = new CanvasJS.Chart("chartContainer2", {
 		animationEnabled: true,
 		theme: "light2",
 		title:{
-			text: "Prices in Nearby cities"
+			text: "Average Price of Make by State"
 		},
 		axisY: {
-			title: "Average Price in City"
+			title: "Average Price"
 		},
 		data: [{
 			type: "column",
 			yValueFormatString: "$#,##0.##",
-			dataPoints: <?php echo json_encode($dataPoints, JSON_NUMERIC_CHECK); ?>
+			dataPoints: <?php echo json_encode($dataPoints3, JSON_NUMERIC_CHECK); ?>
 		}]
 	});
 	chart.render();
+	var chart2 = new CanvasJS.Chart("chartContainer", {
+		animationEnabled: true,
+		theme: "light2",
+		title:{
+			text: "Distribution of Makes in this City"
+		},
+		axisY: {
+			title: "Number of Sales"
+		},
+		data: [{
+			type: "column",
+			yValueFormatString: "#,##0",
+			dataPoints: <?php echo json_encode($dataPoints2, JSON_NUMERIC_CHECK); ?>
+		}]
+	});
+	chart2.render();
 }
 </script>
 
@@ -185,22 +222,22 @@ window.onload = function () {
 	      </li>
 	    </ul>
 	    <span class="navbar-text">
-		welcome, <select onchange=change_user() id="user">
-			<option value="shahi2">Teesh</option>
-			<option value="srkrish2">Sneha</option>
-			<option value="skchuen2">Sam</option>
+		Welcome, <select onchange=change_user() id="user">
+			<option value="shahi2" <?php if($_SESSION['user'] == 'shahi2') echo 'selected';?>>Teesh</option>
+			<option value="srkrish2" <?php if($_SESSION['user'] == 'srkrish2') echo 'selected';?>>Sneha</option>
+			<option value="skchuen2" <?php if($_SESSION['user'] == 'skchuen2') echo 'selected';?>>Sam</option>
 		</select>!
 	    </span>
 	  </div>
 	</nav>
 	<div class="container-fluid">
 	<div class="row">
-		<div class="col-3" style="background-color:#13294b; height: 94.2%">
+		<div class="col-3" style="background-color:#13294b; height: 94.5%">
 			<br>
 			<table id="inbox_list" class="table table-hover table-bordered">
 				<tr class='table-light'>
 					<td>
-						<button type="button" class="btn btn-light" onclick="openclose('makes')">Make</button>
+						<button type="button" class="btn btn-light" onclick="openclose('makes')">Make</button><br><br>
 						<div id='makes' class="w3-container w3-hide pre-scrollable">
 							<?php
 								$query = "SELECT DISTINCT make FROM posts";
@@ -219,7 +256,7 @@ window.onload = function () {
 				</tr>
 				<tr class="table-light">
 					<td>
-						<button type="button" class="btn btn-light" onclick="openclose('models')">Model</button>
+						<button type="button" class="btn btn-light" onclick="openclose('models')">Model</button><br><br>
 						<div id='models' class="w3-container w3-hide pre-scrollable">
 							<?php
 								foreach($filter_model as $row) {
@@ -236,7 +273,7 @@ window.onload = function () {
 				</tr>
 				<tr class="table-light">
 					<td>
-						<button type="button" class="btn btn-light" onclick="openclose('cities')">City, State</button>
+						<button type="button" class="btn btn-light" onclick="openclose('cities')">City, State</button><br><br>
 						<div id='cities' class="w3-container w3-hide pre-scrollable">
 							<?php
 								foreach($filter_city as $row) {
@@ -253,7 +290,7 @@ window.onload = function () {
 				</tr>
 				<tr class="table-light">
 					<td>
-						<button type="button" class="btn btn-light" onclick="openclose('years')">Year</button>
+						<button type="button" class="btn btn-light" onclick="openclose('years')">Year</button><br><br>
 						<div id='years' class="w3-container w3-hide pre-scrollable">
 								<div class="form-inline">
 									<input type='text' id="yearmin" placeholder='Min (eg 1999)'>
@@ -264,11 +301,11 @@ window.onload = function () {
 				</tr>
 				<tr class="table-light">
 					<td>
-						<button type="button" class="btn btn-light" onclick="openclose('price_range')">Price</button>
+						<button type="button" class="btn btn-light" onclick="openclose('price_range')">Price</button><br><br>
 						<div id='price_range' class="w3-container w3-hide pre-scrollable">
 							<div class="form-inline">
-								<input type='text' id="pricemin" placeholder='Min (eg 1999)'>
-								<input type='text' id="pricemax" placeholder='Max(eg 2015)'>
+								<input type='text' id="pricemin" placeholder='Min (eg 10000)'>
+								<input type='text' id="pricemax" placeholder='Max(eg 20000)'>
 							</div>
 						</div>
 					</td>
@@ -277,39 +314,53 @@ window.onload = function () {
 			<button type='submit'  onclick=filtersearch() class='btn btn-primary'>Search</button>
 		</div>
 
-		<div class="col-9">
+		<div class="col-9" style="overflow:hidden">
 			<br>
-                        <div class="col-12 form-inline">
-                          <input id='text_for_search' class="form-control mr-sm-2"  placeholder="Search">
-                          <button type="submit" onclick=text_search() class="btn btn-success">Search</button>
-                        </div>
-			<hr>
-			<div id='post_search_result'></div>
+			<div class="row">
+				<div class="col-12" style="height:7%">
+					<form onsubmit="return text_search()">  
+						<div class="form-row">
+							<div class="col">
+								<input id='text_for_search' class="form-control mr-sm-2"  placeholder="Search">
+				  			</div>
+							<div class="col">
+								<button type="submit" class="btn btn-success">Search</button>
+							</div>
+					</form>
+				</div>
+				<hr>
+			</div>
+			<div id='post_search_result' class="col-12" style="height:85.2%;overflow-y:scroll">
 			<h1 id="post_id">Post #<?php echo $post_id?></h1>
+			<div class="row" style="height:50%">
 			<?php
 				if($post_id) {
-					$query = 'SELECT * FROM posts WHERE post_id = '.$post_id;
-					$result = mysqli_query($conn,$query);
-					foreach($result as $row) {
-						echo '<table class="table table-bordered table-dark">
-							<tr><th>Make</th><td>'.$row['make'].'</td></tr>
-							<tr><th>Model</th><td>'.$row['model'].'</td></tr>
-							<tr><th>Year</th><td>'.$row['year'].'</td></tr>
-							<tr><th>Mileage</th><td>'.$row['mileage'].'</td></tr>
-							<tr><th>City</th><td>'.$row['city'].' ,'.$row['state'].'</td></tr>
-							<tr><th>Price</th><td>$'.$row['price'].'</td></tr>
-							<tr><th>Owner</th><td>'.$row['owner'].'</td></tr>
-							<tr><td colspan=2><button onclick=message_user("'.$row['owner'].'") type="button" class="btn btn-success">Message</button></td></tr>
-						</table>';
-					}
+					echo '<table class="table table-bordered table-dark" style="width:50%">
+						<tr><th>Make</th><td>'.$row_find['make'].'</td></tr>
+						<tr><th>Model</th><td>'.$row_find['model'].'</td></tr>
+						<tr><th>Year</th><td>'.$row_find['year'].'</td></tr>
+						<tr><th>Mileage</th><td>'.$row_find['mileage'].'</td></tr>
+						<tr><th>City</th><td>'.$row_find['city'].', '.$row_find['state'].'</td></tr>
+						<tr><th>Price</th><td>$'.$row_find['price'].'</td></tr>
+						<tr><th>Owner</th><td>'.$row_find['owner'].'</td></tr>
+						<tr><td colspan=2><button onclick=message_user("'.$row_find['owner'].'") type="button" class="btn btn-success">Message</button></td></tr>
+					</table>';
 				}
 
 			?>
-			<hr>
-			<div id="chartContainer" style="height: 300px; width: 100%;"></div>
+			<div id="chartContainer" style="height: 320px; width: 50%;"></div>
+			</div>
+			<div class="row" style="height:50%">
+			<div id="chartContainer2" style="height: 300px; width: 100%;"></div>
+			</div>
+			</div>
 		</div>
 </body>
 <script>
+function redir(post_id) {
+	window.location = "./search.php?post_id="+post_id;
+}
+
 function message_user(user) {
 	var post_id = $('#post_id').text().split('#')[1]
 	var sender = $('#user').val();
@@ -326,6 +377,7 @@ function message_user(user) {
 
 function openclose(id) {
     var x = document.getElementById(id);
+	$('.w3-show').addClass('w3-hide').removeClass('w3-show');
     if (x.className.indexOf("w3-show") == -1) {
         x.className += " w3-show";
     } else {
@@ -352,6 +404,7 @@ function text_search(){
 			$('#post_search_result').html(data);
 		});
 	}
+	return false;
 }
 
 function filtersearch(){

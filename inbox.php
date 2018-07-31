@@ -73,23 +73,26 @@
 			</table>
 			</div>
 		</div>
-		<div class="col-9" style="overflow:hidden">
-			<div class="col-12" style="overflow-y:scroll;height:94.2%">
+		<div class="col-9" style="overflow-y:hidden">
 			<br>
-			<div> 
-				<form onsubmit="return send_message()">
-				<div class="form-row">
-					<div class="col">
-						<input id="message_buffer" class="form-control mr-sm-2" placeholder="Send message">
+			<div class="row"> 
+				<div class="col-12" style="height:5%">
+					<form onsubmit="return send_message()">
+					<div class="form-row">
+						<div class="col">
+							<input id="message_buffer" class="form-control mr-sm-2" placeholder="Send message">
+						</div>
+						<div class="col">
+							<button type="submit" class="btn btn-success">Send</button>
+						</div>
 					</div>
-					<div class="col">
-						<button type="submit" class="btn btn-success">Send</button>
-					</div>
+					</form>
 				</div>
-				</form>
-				<br>
-				<div id="message-content"></div>
 			</div>
+			<div>
+				<div class="col-12" style="overflow-y:scroll;height:85%">
+					<div id="message-content"></div>
+				</div>
 			</div>
 		</div>
 	</div>
