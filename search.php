@@ -106,7 +106,7 @@
 	for($i=0;$i<10;$i++) {
 		array_push($dataPoints,array("y" => (float)$prices[$i], "label" => $min_array_of_cities[$i]));
 	}
-	echo var_dump($dataPoints);
+	//echo var_dump($dataPoints);
 
 	/*$dataPoints = array(
 		array("y" => 3373.64, "label" => "Germany" ),
@@ -140,6 +140,7 @@
 	  integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
 	  crossorigin="anonymous"></script>
 	<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <script>
 window.onload = function () {
 	var chart = new CanvasJS.Chart("chartContainer", {
@@ -278,9 +279,10 @@ window.onload = function () {
 
 		<div class="col-9">
 			<br>
-			<div class="col-12">
-				<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-			</div>
+                        <div class="col-12 form-inline">
+                          <input id='text_for_search' class="form-control mr-sm-2"  placeholder="Search">
+                          <button type="submit" onclick=text_search() class="btn btn-success">Search</button>
+                        </div>
 			<hr>
 			<div id='post_search_result'></div>
 			<h1 id="post_id">Post #<?php echo $post_id?></h1>
