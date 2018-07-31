@@ -2,89 +2,111 @@
 	include_once('db_conn.php');
 	$conn = connect_to_db();
 
-	$query = 'select * from posts where '
+	ini_set('display_errors', 'On');
+	error_reporting(E_ALL | E_STRICT);
 
-	$nfilter = 0
-	if( isset($_POST['year_min']) ){
+	$query = 'select * from posts where ';
+
+	$nfilter = 0;
+	if( $_POST['year_min'] != '' ){
 		$year_min = $_POST['year_min'];
 		$query = $query.' year > '.$year_min;
-		$nfilter = $nfilter + 1
+		$nfilter = $nfilter + 1;
 	}
-	if( isset($_POST['year_max']) ){
+	if( $_POST['year_max'] != '' ){
 		$year_max = $_POST['year_max'];
 		if($nfilter != 0){
 			$query = $query.' AND';
 		}
 		$query = $query.' year < '.$year_max;
-		$nfilter = $nfilter + 1
+		$nfilter = $nfilter + 1;
 	}
-	if( isset($_POST['price_min']) ){
+	if( $_POST['price_min'] != '' ){
 		$price_min = $_POST['price_min'];
 		if($nfilter != 0){
 			$query = $query.' AND';
 		}
 		$query = $query.' price > '.$price_min;
-		$nfilter = $nfilter + 1
+		$nfilter = $nfilter + 1;
 	}
-	if( isset($_POST['price_max']) ){
+	if( $_POST['price_max'] != '' ){
 		$price_max = $_POST['price_max'];
 		if($nfilter != 0){
 			$query = $query.' AND';
 		}
 		$query = $query.' price < '.$price_max;
-		$nfilter = $nfilter + 1
+		$nfilter = $nfilter + 1;
 	}
 	if( isset($_POST['city']) ){
+		error_log("here city", 0);
 		$city = $_POST['city'];
 		if($nfilter >0){
 			$query = $query.' AND (';
 		} else{
 			$query = $query.'(';
-		$n = 0
+		}
+		$n = 0;
 		foreach ($city as $c){
 			if($n != 0){
 				$query = $query.' OR';
 			}
-			$query = $query.' city == "'.$c.'"';
-			$n = $n + 1
+			$query = $query.' city = "'.$c.'"';
+			$n = $n + 1;
 		}
-		$nfilter = $nfilter + 1
+		$nfilter = $nfilter + 1;
+		$query = $query.')';
 	}
 	if( isset($_POST['models']) ){
+		error_log("here models",0);
 		$model = $_POST['models'];
 		if($nfilter >0){
 			$query = $query.' AND (';
 		} else{
 			$query = $query.'(';
-		$n = 0
+		}
+		$n = 0;
 		foreach ($model as $c){
 			if($n != 0){
 				$query = $query.' OR';
 			}
-			$query = $query.' model == "'.$c.'"';
-			$n = $n + 1
+			$query = $query.' model = "'.$c.'"';
+			$n = $n + 1;
 		}
-		$nfilter = $nfilter + 1
+		$nfilter = $nfilter + 1;
+		$query = $query.')';
 	}
 	if( isset($_POST['makes']) ){
+		error_log("here makes", 0);
 		$makes = $_POST['makes'];
 		if($nfilter >0){
 			$query = $query.' AND (';
 		} else{
 			$query = $query.'(';
-		$n = 0
+		}
+		$n = 0;
+		error_log(print_r($makes, true), 0);
+		$cou = count($makes);
+		error_log($cou,0);
 		foreach ($makes as $c){
+			error_log($c,0);
 			if($n != 0){
 				$query = $query.' OR';
 			}
-			$query = $query.' makes == "'.$c.'"';
-			$n = $n + 1
+			$query = $query.' make = "'.$c.'"';
+			$n = $n + 1;
 		}
-		$nfilter = $nfilter + 1
+		$nfilter = $nfilter + 1;
+		$query = $query.')';
 	}
+
+	error_log($query,0);
 
 
 	$result = mysqli_query($conn,$query);
+	if(!$result) {
+		echo $conn->error;
+		die;
+	}
 	$return = '<table class="table table-dark"';
 	$return = $return.' '.'<thead><tr>
 		<th scope="col">Post #</th>

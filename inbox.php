@@ -57,7 +57,7 @@
 	</nav>
 	<div class="container-fluid">
 	<div class="row">
-		<div class="col-3" style="background-color:#13294b; height: 100%">
+		<div class="col-3" style="background-color:#13294b; height: 94.2%">
 			<br>
 			<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
 			<hr>
@@ -73,8 +73,8 @@
 			</table>
 			</div>
 		</div>
-		<div class="col-9">
-			<div class="col-12">
+		<div class="col-9" style="overflow:hidden">
+			<div class="col-12" style="overflow-y:scroll;height:94.2%">
 			<br>
 			<div> 
 				<form onsubmit="return send_message()">
@@ -160,6 +160,13 @@ td {
 }
 #inbox_list td {
 	padding: 20px;
+}
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+}
+* {
+  -ms-overflow-style: none !important;
 }
 </style>
 </html>

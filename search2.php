@@ -155,7 +155,7 @@
                                         </td>
                                 </tr>
 			</table>
-			<button type='submit' id='filter_search' onclick=filtersearch() class='btn btn-primary'>Search</button>
+			<button type='submit'  onclick=filtersearch() class='btn btn-primary'>Search</button>
 		</div>
 		<div class="col-9">
 			<br>

@@ -35,7 +35,7 @@
 		$dest_state = $rpw['state'];
 		$dest = str_replace(' ','+',$row['city']).",".$row['state'];
 	}
-	echo $dest_city;
+	//echo $dest_city;
 	$q_stateandcity = "SELECT DISTINCT City, State FROM posts WHERE city != '".$dest_city."'";
 	$filter_stateandcity = mysqli_query($conn,$q_stateandcity); 
 	$str_all = '';
@@ -52,12 +52,17 @@
 		$i++;
 	}
 	$str_all = substr($str_all,0,-1);
+	/*str_all contains the origin and destinations formatted for the request URL to the 
+	google Distance matrix api*/
+
 	array_push($str_all_arr,$str_all);
+	//here we parse each block of data we get from each request
 
 	foreach($str_all_arr as $str_all) {
-		$str_api = 'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='.$dest.'&destinations='.$str_all.'&key=AIzaSyC4F2OFB2jJuWBpZuUT3wFpSnL2vY4VfjI';
+		$str_api = 'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins='.$dest.'&destinations='.$str_all.'&key=AIzaSyA_w7Njzw4kXFRwXuYrsJTcZYiIP0q4Djg';
 		$data = file_get_contents($str_api);
 		$parsed = json_decode($data,true);
+		
 		//echo var_dump($parsed);
 		$distance = array();
 		if(isset($total_addresses)) {
@@ -78,8 +83,46 @@
 			$total_distance = $distance;
 		}
 	}
-	echo var_dump(array_keys($total_distance, min(array_filter($total_distance))));
-	echo min(array_filter($total_distance));
+	//collect the 10 minimum citiy destinations by parsing and removing from total addresses
+	$min_array_of_cities = array();
+	$curr_min_array = array();
+	$curr_min_index = 0;
+	$curr_address = array();
+	for($i=0;$i<10;$i++){
+		$curr_min_array = array_keys($total_distance, min(array_filter($total_distance)));
+		$curr_min_index = $curr_min_array[0];
+		$curr_address = explode(",",$total_addresses[$curr_min_index]);
+		array_push($min_array_of_cities,$curr_address[0]);
+		unset($total_distance[$curr_min_index]);
+		unset($total_addresses[$curr_min_index]);
+	}
+	#echo var_dump($min_array_of_cities);
+	$prices = array();
+	//calculate the avg price for each city
+	foreach($min_array_of_cities as $city){
+		$query = "SELECT AVG(price) FROM posts WHERE city = '".$city."'";
+		$result = mysqli_query($conn,$query);
+		$row = mysqli_fetch_assoc($result);
+		array_push($prices,$row["AVG(price)"]);
+	}
+	//echo var_dump($prices);
+	//echo var_dump($min_array_addresses);
+	$dataPoints = array();
+	for($i=0;$i<10;$i++) {
+		array_push($dataPoints,array("y" => (float)$prices[$i], "label" => $min_array_of_cities[$i]));
+	}
+	echo var_dump($dataPoints);
+	
+	/*$dataPoints = array( 
+		array("y" => 3373.64, "label" => "Germany" ),
+		array("y" => 2435.94, "label" => "France" ),
+		array("y" => 1842.55, "label" => "China" ),
+		array("y" => 1828.55, "label" => "Russia" ),
+		array("y" => 1039.99, "label" => "Switzerland" ),
+		array("y" => 765.215, "label" => "Japan" ),
+		array("y" => 612.453, "label" => "Netherlands" )
+	);
+	*/
 ?>	
 	
 <html>
@@ -101,8 +144,27 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
 	  integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
 	  crossorigin="anonymous"></script>
-
-	
+	<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<script>
+window.onload = function () {
+	var chart = new CanvasJS.Chart("chartContainer", {
+		animationEnabled: true,
+		theme: "light2",
+		title:{
+			text: "Prices in Nearby cities"
+		},
+		axisY: {
+			title: "Average Price in City"
+		},
+		data: [{
+			type: "column",
+			yValueFormatString: "$#,##0.##",
+			dataPoints: <?php echo json_encode($dataPoints, JSON_NUMERIC_CHECK); ?>
+		}]
+	});
+	chart.render();
+}
+</script>	
 	
 </head>
 <body>
@@ -137,7 +199,7 @@
 	</nav>
 	<div class="container-fluid">
 	<div class="row">
-		<div class="col-3" style="background-color:#13294b; height: 100%">
+		<div class="col-3" style="background-color:#13294b; height: 94.2%">
 			<?php echo $filter_year; ?>
 			<br>
 			<table id="inbox_list" class="table table-hover table-bordered">
@@ -156,31 +218,6 @@
 			</div>
 			<hr>
 			<h1 id="post_id">Post #<?php echo $post_id?></h1>
-			<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-			  <ol class="carousel-indicators">
-			    <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-			    <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-			    <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-			  </ol>
-			  <div class="carousel-inner">
-			    <div class="carousel-item active">
-			      <img class="d-block w-40" src="https://picsum.photos/200/300/?image=0" alt="First slide">
-			    </div>
-			    </div>
-			    <div class="carousel-item">
-			      <img class="d-block w-40" src="https://picsum.photos/200/300/?image=2" alt="Third slide">
-			    </div>
-			  </div>
-			  <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-			    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-			    <span class="sr-only">Previous</span>
-			  </a>
-			  <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-			    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-			    <span class="sr-only">Next</span>
-			  </a>
-			</div>
-			<hr>
 			<?php
 				if($post_id) {
 					$query = 'SELECT * FROM posts WHERE post_id = '.$post_id;
@@ -200,10 +237,9 @@
 				}
 
 			?>
+			<hr>
+			<div id="chartContainer" style="height: 300px; width: 100%;"></div>
 		</div>
-
-
-	
 </body>
 <script>
 function message_user(user) {
